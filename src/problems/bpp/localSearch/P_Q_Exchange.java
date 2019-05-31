@@ -2,11 +2,14 @@ package problems.bpp.localSearch;
 
 import problems.bpp.Bin;
 import solutions.Solution;
+
+import java.util.Random;
+
 import problems.Evaluator;
 import problems.LocalSearch;
 
-public class Kampkes extends LocalSearch<Bin, Bin>{
-
+public class P_Q_Exchange extends LocalSearch<Bin, Bin>{	
+	
 	@Override
 	public Solution<Bin> localOptimalSolution(Evaluator<Bin> eval, Solution<Bin> solution) {
 		return solution;

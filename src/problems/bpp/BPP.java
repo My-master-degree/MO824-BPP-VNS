@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,11 @@ public class BPP implements Evaluator<Bin> {
      * The array of items weight
      */
     public Double[] itensWeight;
+    
+    /**
+     * Lower bound
+     */
+    public Double lowerBound;
 	
 	/**
 	 * The constructor for Bin Packing Problem class. The filename of the
@@ -54,6 +60,11 @@ public class BPP implements Evaluator<Bin> {
 	 */
 	public BPP(String filename) throws IOException {
 		readInput(filename);
+		Double weightSum = 0d;
+		for (int i = 0; i < itensWeight.length; i++) {
+			weightSum += itensWeight[0];
+		}
+		this.lowerBound = weightSum/this.capacity;
 	}	
 	
 	/*
@@ -105,7 +116,14 @@ public class BPP implements Evaluator<Bin> {
         }
 
         return this.size;
-
     }
 
+    public Double getWeightItems (Collection<? extends Integer> items) {
+    	Double weight = 0d;
+    	for (Integer item : items) {
+    		weight += this.itensWeight[item]; 
+		}
+    	return weight; 
+    }
+    
 }

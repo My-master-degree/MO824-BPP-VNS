@@ -11,6 +11,10 @@ public class Solution<E> extends ArrayList<E> {
 		super();
 	}
 	
+	public Solution(int size) {
+		super(size);
+	}
+	
 	public Solution(Solution<E> sol) {
 		super(sol);
 		cost = sol.cost;

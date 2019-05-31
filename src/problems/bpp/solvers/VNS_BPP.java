@@ -2,6 +2,7 @@ package problems.bpp.solvers;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import metaheuristics.vns.AbstractVNS;
 import problems.bpp.BPP_Inverse;
@@ -16,8 +17,9 @@ public class VNS_BPP extends AbstractVNS<Bin> {
 	private LocalSearch<Bin, Bin> localSearch;
 	
 	public VNS_BPP(String filename, Integer iterations, Integer maxDurationInMilliseconds, 
-			ConstructionMethod constructionMethod, LocalSearch<Bin, Bin> localSearch) throws IOException {
-		super(new BPP_Inverse(filename), iterations, maxDurationInMilliseconds, Arrays.asList(localSearch));
+			ConstructionMethod constructionMethod, LocalSearch<Bin, Bin> localSearch, 
+			List<LocalSearch<Bin, Bin>> neighborhoodStructures) throws IOException {
+		super(new BPP_Inverse(filename), iterations, maxDurationInMilliseconds, neighborhoodStructures);
 		this.constructionMethod = constructionMethod;
 		this.localSearch = localSearch;
 	}

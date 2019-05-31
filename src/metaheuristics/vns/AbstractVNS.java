@@ -88,15 +88,21 @@ public abstract class AbstractVNS<E> {
 	 */
 	public Solution<E> solve() {
 		bestSol = constructiveHeuristic();
-		long startTime = System.currentTimeMillis();
+		long endTime = System.currentTimeMillis() + maxDurationInMilliseconds;		
 		for (int i = 0, j = 0; 
 			i < this.neighborhoodStructures.size() && j < maxNumberOfIterations && 
-			System.currentTimeMillis() > startTime + maxDurationInMilliseconds; i++, j++) {
+			System.currentTimeMillis() < endTime; i++, j++) {			
 //			get random solution
 			Solution<E> randomSolution = this.neighborhoodStructures.get(i).randomSolution(this.ObjFunction, this.bestSol);
 			this.ObjFunction.evaluate(randomSolution);
+			if (verbose) {
+				System.out.println("Random generated");
+			}
 //			get local optimal solution
-			Solution<E> localOptimalSolution = localSearch(randomSolution);			
+			Solution<E> localOptimalSolution = localSearch(randomSolution);
+			if (verbose) {
+				System.out.println("Local optimum achieved");
+			}
 			this.ObjFunction.evaluate(localOptimalSolution);
 //			check cost
 			if (localOptimalSolution.cost > bestSol.cost) {

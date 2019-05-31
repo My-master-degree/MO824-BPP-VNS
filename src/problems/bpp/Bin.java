@@ -1,7 +1,9 @@
 package problems.bpp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class Bin extends ArrayList<Integer>{
 	
@@ -23,6 +25,17 @@ public class Bin extends ArrayList<Integer>{
 		if (this.weight + bpp.itensWeight[item] <= this.bpp.capacity) {
 			super.add(item);
 			this.weight += bpp.itensWeight[item];
+			return true;
+		} 	
+		return false;
+	}
+	
+	@Override
+	public boolean addAll(Collection<? extends Integer> items) {
+		double itemsWeight = bpp.getWeightItems(items);
+		if (this.weight + itemsWeight <= this.bpp.capacity) {
+			super.addAll(items);
+			this.weight += itemsWeight;
 			return true;
 		} 	
 		return false;
