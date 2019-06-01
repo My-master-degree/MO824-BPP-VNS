@@ -1,6 +1,7 @@
 package utils.heap;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
 public abstract class Heap<E> {
 		
@@ -22,5 +23,7 @@ public abstract class Heap<E> {
 	protected boolean g(E a, E b) {
 		return this.comparator.compare(a, b) == 1;
 	}
+	
+	public abstract E search(E ele);
 	
 }

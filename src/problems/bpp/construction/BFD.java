@@ -13,36 +13,38 @@ public class BFD implements ConstructionMethod {
 	@Override
 	public Solution<Bin> construct(BPP_Inverse BPP_Inverse) {
 //		no need to sort the items weight, because the items already are sorted in the input
-		
-		
-		
-		Heap<Bin> binHeap = new ArrayHeap<Bin> (new Comparator<Bin>() {
-
-			@Override
-			public int compare(Bin b1, Bin b2) {
-				Double b1RemainingCapacity = b1.getRemainingCapacity();
-				Double b2RemainingCapacity = b1.getRemainingCapacity();
-				if (b1RemainingCapacity > b2RemainingCapacity)
-					return -1;
-				if (b1RemainingCapacity < b2RemainingCapacity)
-					return 1;
-				return 0;
-			}
-		}); 
-		
-		
-//		the list size was defined based in the BFD aproximation factor
+//		Heap<Bin> binHeap = new ArrayHeap<Bin> (new Comparator<Bin>() {
+//			@Override
+//			public int compare(Bin b1, Bin b2) {
+//				Double b1RemainingCapacity = b1.getRemainingCapacity();
+//				Double b2RemainingCapacity = b1.getRemainingCapacity();
+//				if (b1RemainingCapacity > b2RemainingCapacity)
+//					return -1;
+//				if (b1RemainingCapacity < b2RemainingCapacity)
+//					return 1;
+//				return 0;
+//			}
+//		}); 
+//		the list size was defined based in the BFD approximation factor
 		int upperBoundAttempt = (int) Math.ceil(1.23 * BPP_Inverse.lowerBound);
-		
-		
-		
-		
-		Solution<Bin> sol = new Solution<Bin>();
-		
-		binHeap.add(new Bin(BPP_Inverse));
+		Solution<Bin> sol = new Solution<Bin>(upperBoundAttempt);
+		sol.add(new Bin(BPP_Inverse));
 		for (int i = 0; i < BPP_Inverse.size; i++) {
-			
-			sol.add(new Bin(BPP_Inverse, i));
+			Bin bestBin = sol.get(0);
+			for (int j = 1; j < sol.size(); j++) {
+				Bin bin = sol.get(j);
+				if (bin.getRemainingCapacity() >= BPP_Inverse.itensWeight[i] && 
+					bin.getRemainingCapacity() < bestBin.getRemainingCapacity()) {
+					bestBin = bin; 
+				}
+			}
+			if (bestBin.getRemainingCapacity() >= BPP_Inverse.itensWeight[i]) {
+				bestBin.add(i);
+			}else {
+				Bin newBin = new Bin(BPP_Inverse);
+				newBin.add(i);
+				sol.add(newBin);
+			}
 		}
 		return sol;
 	}

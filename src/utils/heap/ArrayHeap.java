@@ -54,12 +54,6 @@ public class ArrayHeap<E> extends Heap<E>{
 	private int rightIndex(int index) {	
 		return (index*2) + 2;
 	}
-
-	private void exchange(int i, int j) {
-		Object aux = this.items[i];
-		this.items[i] = this.items[j];
-		this.items[j] = aux;
-	}
 	
 	private boolean checkRange(int index) {
 		return index >= 0 && index < this.n;
@@ -117,6 +111,11 @@ public class ArrayHeap<E> extends Heap<E>{
 	public E get(int i) {
 		if (this.checkRange(i))
 			return (E) this.items[i];
+		return null;
+	}
+
+	@Override
+	public E search(E ele) {		
 		return null;
 	}
 	
