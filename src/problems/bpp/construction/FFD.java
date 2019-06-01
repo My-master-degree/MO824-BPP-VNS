@@ -14,7 +14,6 @@ public class FFD implements ConstructionMethod {
 //		the list size was defined based in the FFD aproximation factor
 		int upperBoundAttempt = (int) Math.ceil(1.23 * BPP_Inverse.lowerBound);
 		Solution<Bin> sol = new Solution<Bin>(upperBoundAttempt);
-		sol.add(new Bin(BPP_Inverse));
 		for (int i = 0; i < BPP_Inverse.size; i++) {
 			boolean inserted = false;
 			for (int j = 1; j < sol.size(); j++) {

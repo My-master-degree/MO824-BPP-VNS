@@ -11,20 +11,24 @@ import gurobi.GRBEnv;
 import gurobi.GRBException;
 import gurobi.GRBModel;
 import metaheuristics.vns.AbstractVNS;
+import problems.bpp.BPP_Inverse;
+import problems.bpp.Bin;
 import problems.bpp.construction.BFD;
 import problems.bpp.construction.FFD;
 import problems.bpp.construction.NFD;
-import problems.bpp.localSearch.P_Q_Exchange;
 import problems.bpp.localSearch.Swap;
 import problems.bpp.solvers.Gurobi_BPP;
 import problems.bpp.solvers.VNS_BPP;
+import solutions.Solution;
 import utils.heap.ArrayHeap;
 import utils.heap.Heap;
+import utils.heap.Util;
 
 public class Main {
 	public static void main(String[] args) {
 	
 		String[] bpp_instances = new String[] {
+			"./bpp_instances/instance0a.bpp",
 			"./bpp_instances/instance0.bpp",
 			"./bpp_instances/instance1.bpp",
 			"./bpp_instances/instance2.bpp",
@@ -42,45 +46,38 @@ public class Main {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		Heap<Integer> heap = new ArrayHeap<Integer>(new Comparator<Integer>() {
-
-			@Override
-			public int compare(Integer o1, Integer o2) {
-				int cmp = o1.compareTo(o2);
-				if (cmp == -1)
-					return 1;
-				if (cmp == 1)
-					return- 1;
-				return 0;
-			}
-		}, 4);
-	
-		heap.add(3);
-		heap.add(5);
-		heap.add(4);
-		heap.add(1);
-		heap.add(6);
-//		heap.add(0);
-//		heap.add(6);
-//		heap.add(7);
-		System.out.println(heap.toString());
 		
+		runVNS(bpp_instances);
 	}
 	
 	public static void runVNS(String[] instances) {
 		BFD bfd = new BFD();
 		FFD ffd = new FFD();
 		NFD nfd = new NFD();		
-		P_Q_Exchange kampkes = new P_Q_Exchange();
 		
-		for (int i = 0; i < instances.length; i++) {
-//			try {
-//				VNS_BPP vns_bpp = new VNS_BPP(bpp_instances[i], 1000, 180000, nfd, kampkes, Arrays.asList(new Swap(1, 2)));
+		for (int i = 0; i < instances.length; i++) {			
+			try {
+//				VNS_BPP vns_bpp = new VNS_BPP(bpp_instances[i], 1000, 180000, nfd, kampkes, Arrays.asList(new Swap(1, 2)));				
 //				System.out.println(vns_bpp.solve().size());
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			break;
+				BPP_Inverse bpp_inverse = new BPP_Inverse(instances[i]);
+				Swap swap = new Swap(1, 1);
+				
+				Solution<Bin> sol = nfd.construct(bpp_inverse);
+				System.out.println("FFD solution:");
+				Util.printSolution(sol);
+				
+				Solution<Bin> local_sol = swap.localOptimalSolution(bpp_inverse, sol);
+				System.out.println("Local opt solution:");
+				Util.printSolution(local_sol);
+				
+				System.out.println("FFD solution:");
+				Util.printSolution(sol);
+				
+				Util.checkBinPackingSolution(sol, bpp_inverse);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			break;
 			
 		}	
 	}

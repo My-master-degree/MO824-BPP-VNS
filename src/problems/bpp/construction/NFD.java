@@ -12,10 +12,12 @@ public class NFD implements ConstructionMethod {
 //		the list size was defined based in the BFD aproximation factor
 		Solution<Bin> solution = new Solution<Bin>((int) Math.ceil(1.691 * BPP_Inverse.lowerBound));
 		Bin currentBin = new Bin(BPP_Inverse);
-		for (int i = 0; i < BPP_Inverse.itensWeight.length; i++) {
-			if (!currentBin.add(i)) {
-				solution.add(currentBin);
+		solution.add(currentBin);
+		for (int i = 0; i < BPP_Inverse.size; i++) {
+			if (!currentBin.add(i)) {	
 				currentBin = new Bin(BPP_Inverse);
+				currentBin.add(i);
+				solution.add(currentBin);			
 			}
 		}
 		return solution;

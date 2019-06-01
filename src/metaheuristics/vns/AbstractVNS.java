@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 
 import problems.Evaluator;
-import problems.LocalSearch;
 import solutions.Solution;
 
 /**

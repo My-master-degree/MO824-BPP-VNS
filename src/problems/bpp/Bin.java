@@ -2,22 +2,25 @@ package problems.bpp;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public class Bin extends ArrayList<Integer>{
 	
 	private BPP bpp;
 	private Double weight;	
 	
+	public Double getWeight() {
+		return weight;
+	}
+
 	public Bin (BPP bpp) {
+		super();
 		this.bpp = bpp;
 		weight = 0d;
 	}
 	
-	public Bin (BPP bpp, Integer... itens) {
-		this(bpp);	
-		Collections.addAll(this, itens);
+	public Bin (BPP bpp, Collection<? extends Integer> items) {		
+		this(bpp);
+		this.addAll(items);
 	}
 	
 	@Override
@@ -49,10 +52,22 @@ public class Bin extends ArrayList<Integer>{
 			return true;
 		}
 		return false;
+	}	
+	
+	public Bin subBin(int b, int e) {
+		return new Bin(this.bpp, this.subList(b, e));
 	}
 	
 	public Double getRemainingCapacity() {
 		return this.bpp.capacity - this.weight;
+	}
+	
+	@Override
+	public String toString() {
+		String str = "";
+		for (Integer item : this) 
+			str += item + ",";		
+		return str;
 	}
 	
 }
