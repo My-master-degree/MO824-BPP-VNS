@@ -51,4 +51,8 @@ public class Bin extends ArrayList<Integer>{
 		return false;
 	}
 	
+	public Double getRemainingCapacity() {
+		return this.bpp.capacity - this.weight;
+	}
+	
 }
