@@ -35,7 +35,8 @@ public class BFD implements ConstructionMethod {
 			for (int j = 1; j < sol.size(); j++) {
 				Bin bin = sol.get(j);
 				if (bin.getRemainingCapacity() >= BPP_Inverse.itensWeight[i] && 
-					bin.getRemainingCapacity() < bestBin.getRemainingCapacity()) {
+					(bin.getRemainingCapacity() < bestBin.getRemainingCapacity() || 
+					 bestBin.getRemainingCapacity() < BPP_Inverse.itensWeight[i])) {
 					bestBin = bin; 
 				}
 			}
