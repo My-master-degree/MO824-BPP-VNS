@@ -13,6 +13,7 @@ import gurobi.GRBModel;
 import metaheuristics.vns.AbstractVNS;
 import problems.bpp.BPP_Inverse;
 import problems.bpp.Bin;
+import problems.bpp.Bins;
 import problems.bpp.construction.BFD;
 import problems.bpp.construction.FFD;
 import problems.bpp.construction.NFD;
@@ -28,7 +29,7 @@ public class Main {
 	public static void main(String[] args) {
 	
 		String[] bpp_instances = new String[] {
-			"./bpp_instances/instance0a.bpp",
+//			"./bpp_instances/instance0a.bpp",
 			"./bpp_instances/instance0.bpp",
 			"./bpp_instances/instance1.bpp",
 			"./bpp_instances/instance2.bpp",
@@ -60,18 +61,19 @@ public class Main {
 //				VNS_BPP vns_bpp = new VNS_BPP(bpp_instances[i], 1000, 180000, nfd, kampkes, Arrays.asList(new Swap(1, 2)));				
 //				System.out.println(vns_bpp.solve().size());
 				BPP_Inverse bpp_inverse = new BPP_Inverse(instances[i]);
-				Swap swap = new Swap(1, 1);
+//				Swap swap = new Swap(1, 1);
 				
-				Solution<Bin> sol = nfd.construct(bpp_inverse);
-				System.out.println("FFD solution:");
-				Util.printSolution(sol);
+				Bins sol = bfd.construct(bpp_inverse);
+				System.out.println(sol.size());
+//				System.out.println("FFD solution:");
+//				Util.printSolution(sol);
 				
-				Solution<Bin> local_sol = swap.localOptimalSolution(bpp_inverse, sol);
-				System.out.println("Local opt solution:");
-				Util.printSolution(local_sol);
+//				Bins local_sol = swap.localOptimalSolution(bpp_inverse, sol);
+//				System.out.println("Local opt solution:");
+//				Util.printSolution(local_sol);
 				
-				System.out.println("FFD solution:");
-				Util.printSolution(sol);
+//				System.out.println("FFD solution:");
+//				Util.printSolution(sol);
 				
 				Util.checkBinPackingSolution(sol, bpp_inverse);
 			} catch (IOException e) {

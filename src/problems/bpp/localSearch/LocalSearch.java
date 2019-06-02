@@ -7,9 +7,9 @@ import solutions.Solution;
 
 public abstract class LocalSearch {
 
-	public abstract Solution<Bin> localOptimalSolution(BPP eval, Bins solution);
+	public abstract Bins localOptimalSolution(BPP eval, Bins solution);
 	
-	public abstract Solution<Bin> randomSolution(BPP eval, Bins solution);
+	public abstract Bins randomSolution(BPP eval, Bins solution);
 	
 	public Double costOfBins(Bin... bins) {
 		Double cost = 0d;

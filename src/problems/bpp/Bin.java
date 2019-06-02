@@ -23,6 +23,12 @@ public class Bin extends ArrayList<Integer>{
 		this.addAll(items);
 	}
 	
+	public Bin (BPP bpp, int size) {		
+		super(size);
+		this.bpp = bpp;
+		weight = 0d;
+	}
+	
 	@Override
 	public boolean add (Integer item) {
 		if (this.weight + bpp.itensWeight[item] <= this.bpp.capacity) {

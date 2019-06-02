@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import problems.bpp.BPP_Inverse;
 import problems.bpp.Bin;
+import problems.bpp.Bins;
 import solutions.Solution;
 import utils.heap.ArrayHeap;
 import utils.heap.Heap;
@@ -11,7 +12,7 @@ import utils.heap.Heap;
 public class BFD implements ConstructionMethod {
 
 	@Override
-	public Solution<Bin> construct(BPP_Inverse BPP_Inverse) {
+	public Bins construct(BPP_Inverse BPP_Inverse) {
 //		no need to sort the items weight, because the items already are sorted in the input
 //		Heap<Bin> binHeap = new ArrayHeap<Bin> (new Comparator<Bin>() {
 //			@Override
@@ -27,7 +28,7 @@ public class BFD implements ConstructionMethod {
 //		}); 
 //		the list size was defined based in the BFD approximation factor
 		int upperBoundAttempt = (int) Math.ceil(1.23 * BPP_Inverse.lowerBound);
-		Solution<Bin> sol = new Solution<Bin>(upperBoundAttempt);
+		Bins sol = new Bins(upperBoundAttempt);
 		sol.add(new Bin(BPP_Inverse));
 		for (int i = 0; i < BPP_Inverse.size; i++) {
 			Bin bestBin = sol.get(0);

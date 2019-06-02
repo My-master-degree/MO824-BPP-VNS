@@ -3,6 +3,7 @@ package problems.bpp.localSearch;
 import problems.bpp.BPP;
 import problems.bpp.BPP_Inverse;
 import problems.bpp.Bin;
+import problems.bpp.Bins;
 import solutions.Solution;
 
 import java.util.ArrayList;
@@ -21,8 +22,8 @@ public class Swap extends LocalSearch{
 	}
 	
 	@Override
-	public Solution<Bin> localOptimalSolution(BPP bpp, Solution<Bin> solution) {
-		Solution<Bin> newSolution = (Solution<Bin>) solution.clone();
+	public Bins localOptimalSolution(BPP bpp, Bins solution) {
+		Bins newSolution = (Bins) solution.clone();
 		Integer n = newSolution.size();		
 //		iterate over bins
 		for (int i = 0; i < n; i++) {			
@@ -64,8 +65,8 @@ public class Swap extends LocalSearch{
 	}
 
 	@Override
-	public Solution<Bin> randomSolution(BPP eval, Solution<Bin> solution) {
-		Solution<Bin> newSolution = (Solution<Bin>) solution.clone();
+	public Bins randomSolution(BPP eval, Bins solution) {
+		Bins newSolution = (Bins) solution.clone();
 		Random random = new Random();
 		Integer n = newSolution.size();
 		while (true) {
@@ -85,8 +86,8 @@ public class Swap extends LocalSearch{
 	//		select randomly p items from the first bin
 			int p = this.p >= fBSize ? fBSize : this.p;
 			int q = this.q >= sBSize ? sBSize : this.q;
-			List<Integer> firstBinRemovedItens =  new ArrayList<Integer> (p),
-					secondBinRemovedItens =  new ArrayList<Integer> (p);		
+			Bin firstBinRemovedItens =  new Bin (eval, p),
+					secondBinRemovedItens =  new Bin (eval, p);		
 			for (int i = 0; i < p; i++) {
 				firstBinRemovedItens.add(firstBin.remove(random.nextInt(firstBin.size())));
 			}
