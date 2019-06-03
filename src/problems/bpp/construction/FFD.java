@@ -17,7 +17,7 @@ public class FFD implements ConstructionMethod {
 		Bins sol = new Bins(upperBoundAttempt);
 		for (int i = 0; i < BPP_Inverse.size; i++) {
 			boolean inserted = false;
-			for (int j = 1; j < sol.size(); j++) {
+			for (int j = 0; j < sol.size(); j++) {
 				Bin bin = sol.get(j);
 				if (bin.add(i)) {
 					inserted = true;
@@ -30,6 +30,7 @@ public class FFD implements ConstructionMethod {
 				sol.add(newBin);
 			}
 		}
+//		System.out.println("COnstruction with: "+sol.size());
 		return sol;
 	}
 

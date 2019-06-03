@@ -19,6 +19,17 @@ import solutions.Solution;
  */
 public abstract class AbstractVNS<E> {
 	
+	public enum VNS_TYPE{
+		INTENSIFICATION(1),
+		DIVERSIFICATION(2);
+		VNS_TYPE(int type){
+			this.type = type;
+		}
+		int type;
+	}
+	
+	protected VNS_TYPE vns_type;
+	
 	/**
 	 * flag that indicates whether the code should print more information on
 	 * screen
@@ -33,7 +44,7 @@ public abstract class AbstractVNS<E> {
 	/**
 	 * the neighborhood structure list
 	 */
-	protected List<LocalSearch<E, E>> neighborhoodStructures;
+	protected List<LocalSearch<E>> neighborhoodStructures;
 	
 	/**
 	 * the objective function being optimized
@@ -58,7 +69,12 @@ public abstract class AbstractVNS<E> {
 	/**
 	 * the time in microseconds the VNS main loop executes.
 	 */
-	protected Integer maxDurationInMilliseconds;	
+	protected Integer maxDurationInMilliseconds;
+	
+	/**
+	 * the time in microseconds the VNS main loop executes.
+	 */
+	protected Integer k_step;	
 
 	/**
 	 * Constructor for the AbstractGRASP class.
@@ -71,11 +87,17 @@ public abstract class AbstractVNS<E> {
 	 * @param iterations
 	 *            The number of iterations which the GRASP will be executed.
 	 */
-	public AbstractVNS(Evaluator<E> objFunction, Integer iterations, Integer maxDurationInMilliseconds, List<LocalSearch<E, E>> localSearchs) {
+	public AbstractVNS(Evaluator<E> objFunction, Integer iterations, Integer maxDurationInMilliseconds, 
+			List<LocalSearch<E>> localSearchs, VNS_TYPE vns_type) {
 		this.ObjFunction = objFunction;
 		this.maxNumberOfIterations = iterations;
 		this.maxDurationInMilliseconds = maxDurationInMilliseconds;
 		this.neighborhoodStructures = localSearchs;
+		this.vns_type = vns_type;
+		if (vns_type.equals(VNS_TYPE.INTENSIFICATION))
+			k_step = 1;
+		else
+			k_step = 2;
 	}	
 	
 	/**
@@ -87,34 +109,60 @@ public abstract class AbstractVNS<E> {
 	 */
 	public Solution<E> solve() {
 		bestSol = constructiveHeuristic();
-		long endTime = System.currentTimeMillis() + maxDurationInMilliseconds;		
-		for (int i = 0, j = 0; 
-			i < this.neighborhoodStructures.size() && j < maxNumberOfIterations && 
-			System.currentTimeMillis() < endTime; i++, j++) {			
+		if (verbose) {
+//			System.out.println("\tConstruction:" + bestSol.size());
+		}
+		long endTime = System.currentTimeMillis() + maxDurationInMilliseconds;	
+		Solution<E> localOptimalSolution = bestSol;
+		this.ObjFunction.evaluate(localOptimalSolution);
+		int j = 0;
+		for (int i = 0; 
+			i < this.neighborhoodStructures.size() && 
+			System.currentTimeMillis() < endTime; i += k_step, j++) {			
 //			get random solution
-			Solution<E> randomSolution = this.neighborhoodStructures.get(i).randomSolution(this.ObjFunction, this.bestSol);
-			this.ObjFunction.evaluate(randomSolution);
-			if (verbose) {
-				System.out.println("Random generated");
-			}
+//			Solution<E> randomSolution = this.random(this.bestSol);
+//			this.ObjFunction.evaluate(randomSolution);			
+			
 //			get local optimal solution
-			Solution<E> localOptimalSolution = localSearch(randomSolution);
-			if (verbose) {
-				System.out.println("Local optimum achieved");
-			}
+//			Solution<E> localOptimalSolution = localSearch(randomSolution);
+//			Solution<E> localOptimalSolution = this.neighborhoodStructures.get(i).localOptimalSolution(this.ObjFunction, this.bestSol);
+//			for (int k = 0; k < this.neighborhoodStructures.size(); k++) {
+			localOptimalSolution = this.neighborhoodStructures.get(i).localOptimalSolution(this.ObjFunction, localOptimalSolution);	
+//			}
 			this.ObjFunction.evaluate(localOptimalSolution);
 //			check cost
-			if (localOptimalSolution.cost > bestSol.cost) {
+			if (localOptimalSolution.cost < bestSol.cost) {
 				bestSol = new Solution<E>(localOptimalSolution);
+				this.ObjFunction.evaluate(bestSol);
 				if (verbose) {
-					System.out.println("(Iter. " + j + ") BestSol = " + bestSol);
+//					System.out.println("\t(Iter. " + j + ") BestSol = " + bestSol);
 				}
 			}		
+//			break;
 		}
+		
+		
+//		
+		for (;j < maxNumberOfIterations && System.currentTimeMillis() < endTime; j++) {
+			Solution<E> randomSolution = this.random(localOptimalSolution);	
+			this.ObjFunction.evaluate(randomSolution);
+			for (int i = 0; i < this.neighborhoodStructures.size(); i++) {				
+//				check cost
+				randomSolution = this.neighborhoodStructures.get(i).localOptimalSolution(this.ObjFunction, randomSolution);
+				if (randomSolution.cost < bestSol.cost) {
+					bestSol = new Solution<E>(randomSolution);
+					this.ObjFunction.evaluate(bestSol);
+					if (verbose) {
+//						System.out.println("\t(Iter. " + j + ") BestSol = " + bestSol);
+					}
+				}		
+			}
+		}
+		
 
 		return bestSol;
-	}
-
+	}	
+	
 	/**
 	 * The GRASP local search phase is responsible for repeatedly applying a
 	 * neighborhood operation while the solution is getting improved, i.e.,
@@ -122,7 +170,7 @@ public abstract class AbstractVNS<E> {
 	 * 
 	 * @return An local optimum solution.
 	 */
-	public abstract Solution<E> localSearch(Solution<E> solution);	
+	public abstract Solution<E> random(Solution<E> solution);	
 	
 	/**
 	 * The GRASP constructive heuristic, which is responsible for building a
@@ -132,5 +180,13 @@ public abstract class AbstractVNS<E> {
 	 * @return A feasible solution to the problem being maximized.
 	 */
 	public abstract Solution<E> constructiveHeuristic();
+
+	/**
+	 * @return the objFunction
+	 */
+	public Evaluator<E> getObjFunction() {
+		return ObjFunction;
+	}
+	
 
 }

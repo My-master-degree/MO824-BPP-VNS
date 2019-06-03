@@ -27,6 +27,9 @@ public class Util {
 			if (consumedWeight > bpp.capacity) {
 				System.out.println("A Bin has passed the capacity!");
 			}
+			if (consumedWeight == 0) {
+				System.out.println("A Bin is empty");
+			}
 		}
 		for (int i = 0; i < bpp.size; i++) {
 			Integer r = items.get(i);

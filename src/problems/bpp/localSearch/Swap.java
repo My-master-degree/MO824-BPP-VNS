@@ -27,10 +27,11 @@ public class Swap extends LocalSearch{
 		Integer n = newSolution.size();		
 //		iterate over bins
 		for (int i = 0; i < n; i++) {			
-			for (int j = 0; j < n; j++) {
+			for (int j = 0; i < n && j < n; j++) {
 				if (i != j) {					
-					Bin firstBin = newSolution.get(i);
-					Bin secondBin = newSolution.get(j);
+					Bin firstBin = (Bin) newSolution.get(i).clone();
+					Bin secondBin = (Bin) newSolution.get(j).clone();					
+					
 					int firstSize = firstBin.size();
 					int secondSize = secondBin.size();
 					int p = this.p >= firstSize ? firstSize : this.p;
@@ -47,20 +48,23 @@ public class Swap extends LocalSearch{
 //						change secondBin
 						secondBin.removeAll(secondSubBin);						
 						secondBin.addAll(firstSubBin);
+//						set indexes
+						newSolution.set(i, firstBin);
+						newSolution.set(j, secondBin);
 //						if some there's bin empty
 						if (firstBin.size() == 0) {
-							newSolution.remove(firstSize);
+							newSolution.remove(i);
 							n = newSolution.size();
 						}
 						if (secondBin.size() == 0) {
-							newSolution.remove(secondSize);
+							newSolution.remove(j);
 							n = newSolution.size();
-						}
-						System.out.println("Improvement done");
+						}						
 					}
 				}				
 			}			
 		}		
+//		System.out.println("swap with: "+newSolution.size());
 		return newSolution;
 	}
 
@@ -71,15 +75,13 @@ public class Swap extends LocalSearch{
 		Integer n = newSolution.size();
 		while (true) {
 	//		select randomly two bins
-			Integer firstBinIndex = random.nextInt(n),
-				secondBinIndex = random.nextInt(n);
+			Integer firstBinIndex = random.nextInt(n);
+			Integer secondBinIndex = random.nextInt(n);
 			while (firstBinIndex.equals(secondBinIndex))
 				secondBinIndex = random.nextInt(n);
-			Bin firstBin = newSolution.get(firstBinIndex),
-				secondBin = newSolution.get(secondBinIndex);		
-	//		create copy of bins
-//			firstBin = (Bin) firstBin.clone();
-//			secondBin = (Bin) secondBin.clone();
+			Bin firstBin = (Bin) newSolution.get(firstBinIndex).clone(),
+				secondBin = (Bin) newSolution.get(secondBinIndex).clone();		
+//			System.out.println("Bins "+firstBinIndex+", "+secondBinIndex);
 	//		save sizes
 			int fBSize = firstBin.size();
 			int sBSize = secondBin.size();				
@@ -87,7 +89,7 @@ public class Swap extends LocalSearch{
 			int p = this.p >= fBSize ? fBSize : this.p;
 			int q = this.q >= sBSize ? sBSize : this.q;
 			Bin firstBinRemovedItens =  new Bin (eval, p),
-					secondBinRemovedItens =  new Bin (eval, p);		
+					secondBinRemovedItens =  new Bin (eval, q);		
 			for (int i = 0; i < p; i++) {
 				firstBinRemovedItens.add(firstBin.remove(random.nextInt(firstBin.size())));
 			}
@@ -95,7 +97,7 @@ public class Swap extends LocalSearch{
 			for (int i = 0; i < q; i++) {
 				secondBinRemovedItens.add(secondBin.remove(random.nextInt(secondBin.size())));
 			}
-	//		move items and check integrity
+	//		check integrity
 			if (secondBin.addAll(firstBinRemovedItens) && firstBin.addAll(secondBinRemovedItens)) {
 				newSolution.set(firstBinIndex, firstBin);
 				newSolution.set(secondBinIndex, secondBin);
@@ -111,8 +113,22 @@ public class Swap extends LocalSearch{
 				break;
 			}
 		}
+		System.out.println("Swap wort to: "+newSolution.size());
 		return newSolution;
 	}
 
+	/**
+	 * @return the p
+	 */
+	public Integer getP() {
+		return p;
+	}
 
+	/**
+	 * @return the q
+	 */
+	public Integer getQ() {
+		return q;
+	}
+	
 }

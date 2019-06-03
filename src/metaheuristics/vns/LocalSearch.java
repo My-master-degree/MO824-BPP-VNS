@@ -8,8 +8,8 @@ import solutions.Solution;
 
 public abstract class LocalSearch<E> {
 
-	public abstract E localOptimalSolution(Evaluator<E> eval, S solution);
+	public abstract Solution<E> localOptimalSolution(Evaluator<E> eval, Solution<E> solution);
 	
-	public abstract S randomSolution(E eval, S solution);
+	public abstract Solution<E> randomSolution(Evaluator<E> eval, Solution<E> solution);
 	
 }

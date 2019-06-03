@@ -21,6 +21,7 @@ public class NFD implements ConstructionMethod {
 				solution.add(currentBin);			
 			}
 		}
+//		System.out.println("COnstruction with: "+solution.size());
 		return solution;
 	}
 

@@ -48,6 +48,7 @@ public class BFD implements ConstructionMethod {
 				sol.add(newBin);
 			}
 		}
+//		System.out.println("COnstruction with: "+sol.size());
 		return sol;
 	}
 

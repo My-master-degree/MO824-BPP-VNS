@@ -18,6 +18,14 @@ public abstract class LocalSearch {
 		}
 		return cost;
 	}
+	
+	public Double costOfBins(Bins bins) {
+		Double cost = 0d;
+		for (Bin bin : bins) {
+			cost += Math.pow(bin.getRemainingCapacity(), 2);
+		}
+		return cost;
+	}
 
 	public Double costOfRemainingWeights(Double... binsWeights) {
 		Double cost = 0d;

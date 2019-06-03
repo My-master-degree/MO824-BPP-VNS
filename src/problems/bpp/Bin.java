@@ -56,8 +56,26 @@ public class Bin extends ArrayList<Integer>{
 		if (super.remove(_item)) {		
 			this.weight -= bpp.itensWeight[_item];
 			return true;
-		}
-		return false;
+		}		
+		return false;				
+	}	
+	
+	
+	@Override
+	public Integer remove (int index) {
+		Integer item = super.remove(index);
+		if (item != null) {		
+			this.weight -= bpp.itensWeight[item];			
+		}		
+		return item;
+	}
+	
+	@Override
+	public boolean removeAll (Collection<?> items) {
+		for (Object item : items) {				
+			this.weight -= bpp.itensWeight[(Integer) item];											
+		}			
+		return super.removeAll(items);		
 	}	
 	
 	public Bin subBin(int b, int e) {

@@ -15,4 +15,10 @@ public class Bins extends Solution<Bin> {
 	public Bins(int size) {
 		super(size);
 	}
+
+	public Bins(Solution<Bin> solution) {
+		for (Bin bin : solution) {
+			super.add(bin);
+		}
+	}
 }
