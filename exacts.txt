@@ -1,4 +1,0 @@
-EXACT
-./bpp_instances/instance0.bpp
-Z* = 68.0
-Time = 30042

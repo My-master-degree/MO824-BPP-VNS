@@ -37,8 +37,8 @@ import utils.heap.Util;
 public class Main {
 	
 	public static Integer VNS_ITERATION_MAX_NUMBER = Integer.MAX_VALUE;
-	public static Integer VNS_TIME_MAX_MILI_SECONDS = 1800000;
-	public static Integer EXACT_TIME_MAX_SECONDS = 1800;
+	public static Integer VNS_TIME_MAX_MILI_SECONDS = 1800;
+	public static Integer EXACT_TIME_MAX_SECONDS = 30;
 	
 	public static void main(String[] args) {
 	
@@ -56,40 +56,71 @@ public class Main {
 			"./bpp_instances/instance9.bpp",										
 		};
 //		heuristic
-		BFD bfd = new BFD();
-		String str = "";
-		str = "VNS BFD Itensification\n";
-		System.out.println("VNS BFD Itensification");		
-		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.INTENSIFICATION);
-		str += "VNS BFD Diversification\n";
-		System.out.println("VNS BFD Diversification");		
-		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.DIVERSIFICATION);
-		BufferedWriter writer;
-		try {
-			writer = new BufferedWriter(new FileWriter("heuristics.txt"));
-			writer.write(str);		     
-		    writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	    
-//		exact
-		str = "EXACT\n";
-		try {
-			str += runExacts(bpp_instances);
-		} catch (IOException | GRBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			writer = new BufferedWriter(new FileWriter("exacts.txt"));
-			writer.write(str);		     
-		    writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	  
+//		itensification
+		new Thread(new Runnable() {
+            @Override
+            public void run() {
+            	BFD bfd = new BFD();
+        		String str = "";
+        		str = "VNS BFD Itensification\n";
+        		System.out.println("VNS BFD Itensification");		
+        		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.INTENSIFICATION);
+        		BufferedWriter writer;
+        		try {
+        			writer = new BufferedWriter(new FileWriter("vnd_bfd_itensification.txt"));
+        			writer.write(str);		     
+        		    writer.close();
+        		} catch (IOException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}	
+            }
+        }).start();
+//		diversification
+		new Thread(new Runnable() {
+            @Override
+            public void run() {
+            	BFD bfd = new BFD();
+        		String str = "";
+        		str = "VNS BFD Diversification\n";
+        		System.out.println("VNS BFD Itensification");		
+        		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.DIVERSIFICATION);
+        		BufferedWriter writer;
+        		try {
+        			writer = new BufferedWriter(new FileWriter("vnd_bfd_diversification.txt"));
+        			writer.write(str);		     
+        		    writer.close();
+        		} catch (IOException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}	
+            }
+        }).start();
 		
+		
+	    
+//		exact
+		new Thread(new Runnable() {
+            @Override
+            public void run() {
+        		String str = "EXACT\n";
+        		try {
+        			str += runExacts(bpp_instances);
+        		} catch (IOException | GRBException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
+        		BufferedWriter writer;
+        		try {
+        			writer = new BufferedWriter(new FileWriter("exacts.txt"));
+        			writer.write(str);		     
+        		    writer.close();
+        		} catch (IOException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}	  
+            }
+        }).start();
 	}
 	
 	public static String runVNS(String[] instances, ConstructionMethod constructionMethod, AbstractVNS.VNS_TYPE vns_type) {		

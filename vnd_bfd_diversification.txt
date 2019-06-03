@@ -1,24 +1,3 @@
-VNS BFD Itensification
-./bpp_instances/instance0.bpp
-	VNS cost: 66
-./bpp_instances/instance1.bpp
-	VNS cost: 66
-./bpp_instances/instance2.bpp
-	VNS cost: 133
-./bpp_instances/instance3.bpp
-	VNS cost: 133
-./bpp_instances/instance4.bpp
-	VNS cost: 199
-./bpp_instances/instance5.bpp
-	VNS cost: 199
-./bpp_instances/instance6.bpp
-	VNS cost: 266
-./bpp_instances/instance7.bpp
-	VNS cost: 266
-./bpp_instances/instance8.bpp
-	VNS cost: 333
-./bpp_instances/instance9.bpp
-	VNS cost: 333
 VNS BFD Diversification
 ./bpp_instances/instance0.bpp
 	VNS cost: 66
