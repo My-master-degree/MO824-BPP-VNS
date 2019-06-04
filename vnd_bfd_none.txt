@@ -1,4 +1,4 @@
-VNS BFD Itensification
+VNS BFD NOne
 ./bpp_instances/instance0.bpp
 	VNS cost: 66
 ./bpp_instances/instance1.bpp

@@ -85,7 +85,11 @@ public class BPP implements Evaluator<Bin> {
 	 */
 	@Override
 	public Double evaluate(Solution<Bin> sol) {
-		return sol.cost = (double) sol.size();		
+		double cost = 0d;
+		for (Bin bin : sol) {
+			cost += bin.getWeight();
+		}
+		return cost;		
 	}	
 	
 	 /**

@@ -37,13 +37,11 @@ import utils.heap.Util;
 public class Main {
 	
 	public static Integer VNS_ITERATION_MAX_NUMBER = Integer.MAX_VALUE;
-	public static Integer VNS_TIME_MAX_MILI_SECONDS = 1800;
-	public static Integer EXACT_TIME_MAX_SECONDS = 30;
+	public static Integer VNS_TIME_MAX_MILI_SECONDS = 600000;
+	public static Integer EXACT_TIME_MAX_SECONDS = 600;
 	
 	public static void main(String[] args) {
-	
 		String[] bpp_instances = new String[] {
-//			"./bpp_instances/instance0a.bpp",
 			"./bpp_instances/instance0.bpp",
 			"./bpp_instances/instance1.bpp",
 			"./bpp_instances/instance2.bpp",
@@ -56,71 +54,49 @@ public class Main {
 			"./bpp_instances/instance9.bpp",										
 		};
 //		heuristic
-//		itensification
-		new Thread(new Runnable() {
-            @Override
-            public void run() {
-            	BFD bfd = new BFD();
-        		String str = "";
-        		str = "VNS BFD Itensification\n";
-        		System.out.println("VNS BFD Itensification");		
-        		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.INTENSIFICATION);
-        		BufferedWriter writer;
-        		try {
-        			writer = new BufferedWriter(new FileWriter("vnd_bfd_itensification.txt"));
-        			writer.write(str);		     
-        		    writer.close();
-        		} catch (IOException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}	
-            }
-        }).start();
-//		diversification
-		new Thread(new Runnable() {
-            @Override
-            public void run() {
-            	BFD bfd = new BFD();
-        		String str = "";
-        		str = "VNS BFD Diversification\n";
-        		System.out.println("VNS BFD Itensification");		
-        		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.DIVERSIFICATION);
-        		BufferedWriter writer;
-        		try {
-        			writer = new BufferedWriter(new FileWriter("vnd_bfd_diversification.txt"));
-        			writer.write(str);		     
-        		    writer.close();
-        		} catch (IOException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}	
-            }
-        }).start();
-		
-		
-	    
+		BFD bfd = new BFD();
+		String str = "";
+		str = "VNS BFD Itensification Diversification\n";
+		System.out.println("VNS BFD Itensification");		
+		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.INTENSIFICATION_DIVERSIFICATION);
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new FileWriter("vnd_bfd_itensification_diversification.txt"));
+			writer.write(str);		     
+		    writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+//		none
+		str = "";
+		str = "VNS BFD None\n";
+		System.out.println("VNS BFD None");		
+		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.NONE);		
+		try {
+			writer = new BufferedWriter(new FileWriter("vnd_bfd_none.txt"));
+			writer.write(str);		     
+		    writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 //		exact
-		new Thread(new Runnable() {
-            @Override
-            public void run() {
-        		String str = "EXACT\n";
-        		try {
-        			str += runExacts(bpp_instances);
-        		} catch (IOException | GRBException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
-        		BufferedWriter writer;
-        		try {
-        			writer = new BufferedWriter(new FileWriter("exacts.txt"));
-        			writer.write(str);		     
-        		    writer.close();
-        		} catch (IOException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}	  
-            }
-        }).start();
+		str = "EXACT\n";
+		try {
+			str += runExacts(bpp_instances);
+		} catch (IOException | GRBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		try {
+			writer = new BufferedWriter(new FileWriter("exacts.txt"));
+			writer.write(str);		     
+		    writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	  
 	}
 	
 	public static String runVNS(String[] instances, ConstructionMethod constructionMethod, AbstractVNS.VNS_TYPE vns_type) {		
@@ -129,7 +105,7 @@ public class Main {
 			System.out.println(instances[i]);
 			str += instances[i] + "\n";
 			try {
-				
+				BPP_Inverse bpp = new BPP_Inverse(instances[i]);
 				List<LocalSearch<Bin>> neighborhoodConverted = new ArrayList<LocalSearch<Bin>>();
 				
 				LocalSearch<Bin> localSearch = new LocalSearch<Bin>() {
@@ -143,40 +119,40 @@ public class Main {
 						return new Shuffle().randomSolution((BPP) eval, new Bins(solution));
 					}
 				};
-				VNS_BPP vns_bpp = new VNS_BPP(instances[i], VNS_ITERATION_MAX_NUMBER, VNS_TIME_MAX_MILI_SECONDS, constructionMethod, 
+				List<problems.bpp.localSearch.LocalSearch> neighborhoodStructures = new ArrayList<problems.bpp.localSearch.LocalSearch>(
+						Arrays.asList(
+								new Swap(0, 1), new Swap(0, 2), new Swap(1, 1), new Swap(2, 1), 
+								new FirstFit(bpp.size)
+								)
+						); 				
+					for (problems.bpp.localSearch.LocalSearch neighborhoodStructure : neighborhoodStructures) {
+						neighborhoodConverted.add(new LocalSearch<Bin>() {				
+							@Override
+							public Solution<Bin> randomSolution(Evaluator<Bin> eval, Solution<Bin> solution) {					
+								return (Solution<Bin>) neighborhoodStructure.randomSolution((BPP) eval, new Bins(solution));
+							}
+							
+							@Override
+							public Solution<Bin> localOptimalSolution(Evaluator<Bin> eval, Solution<Bin> solution) {
+								return (Solution<Bin>) neighborhoodStructure.localOptimalSolution((BPP) eval, (Bins) solution);
+							}
+						});
+					}
+				
+				VNS_BPP vns_bpp = new VNS_BPP(bpp, VNS_ITERATION_MAX_NUMBER, VNS_TIME_MAX_MILI_SECONDS, constructionMethod, 
 						localSearch, neighborhoodConverted, vns_type);
 				
 				
-				List<problems.bpp.localSearch.LocalSearch> neighborhoodStructures = new ArrayList<problems.bpp.localSearch.LocalSearch>(
-					Arrays.asList(
-							new Swap(0, 1), new Swap(0, 2), new Swap(1, 1), new Swap(2, 1), new FirstFit(vns_bpp.getObjFunction().getDomainSize())
-							)
-					); 				
-				for (problems.bpp.localSearch.LocalSearch neighborhoodStructure : neighborhoodStructures) {
-					neighborhoodConverted.add(new LocalSearch<Bin>() {				
-						@Override
-						public Solution<Bin> randomSolution(Evaluator<Bin> eval, Solution<Bin> solution) {					
-							return (Solution<Bin>) neighborhoodStructure.randomSolution((BPP) eval, new Bins(solution));
-						}
-						
-						@Override
-						public Solution<Bin> localOptimalSolution(Evaluator<Bin> eval, Solution<Bin> solution) {
-							return (Solution<Bin>) neighborhoodStructure.localOptimalSolution((BPP) eval, (Bins) solution);
-						}
-					});
-				}
+				
 				
 							
 				Bins sol = new Bins(vns_bpp.solve());
 				
-				str += "\tVNS cost: "+vns_bpp.solve().size() + "\n";
-				System.out.println("\tVNS cost: "+vns_bpp.solve().size());
+				str += "\tVNS cost: "+sol.size() + "\n";
+				System.out.println("\tVNS cost: "+sol.size());
 				
 				
 				Util.checkBinPackingSolution(sol, (BPP) vns_bpp.getObjFunction());
-				
-//				Util.checkBinPackingSolution(new Shuffle().randomSolution((BPP_Inverse) vns_bpp.getObjFunction(), 
-//					nfd.construct((BPP_Inverse) vns_bpp.getObjFunction())), (BPP) vns_bpp.getObjFunction());
 				
 				
 				
@@ -209,30 +185,12 @@ public class Main {
 			time = System.currentTimeMillis() - time;
 			System.out.println("\n\nZ* = " + gurobi.model.get(GRB.DoubleAttr.ObjVal));
 			str += "Z* = " + gurobi.model.get(GRB.DoubleAttr.ObjVal)+"\n";
+			System.out.println("\n\nObjBound = " + gurobi.model.get(GRB.DoubleAttr.ObjBound));
+			str += "ObjBound = " + gurobi.model.get(GRB.DoubleAttr.ObjBound)+"\n";
+			System.out.println("\n\nObjBoundC = " + gurobi.model.get(GRB.DoubleAttr.ObjBoundC));
+			str += "ObjBoundC = " + gurobi.model.get(GRB.DoubleAttr.ObjBoundC)+"\n";
 			System.out.println("\nTime = "+time);
 			str += "Time = " + time +"\n";
-//			System.out.print("Y = [");
-//			str += "Y = [";
-//			for (int j = 0; j < gurobi.bpp.size; j++) {
-//	//				          System.out.print(gurobi.x[j].get(GRB.DoubleAttr.X) + ", ");
-//		          str += gurobi.y[j].get(GRB.DoubleAttr.X) + ", ";
-//			}			
-//			System.out.println("]");
-//			str += "]\n";
-//			System.out.print("X = [");
-//			str += "X = [";
-//			for (int j = 0; j < gurobi.bpp.size; j++) {
-//				System.out.print("[");
-//				str += "[";
-//				for (int k = 0; k < gurobi.bpp.size; k++) {
-//					System.out.print(gurobi.x[j][k].get(GRB.DoubleAttr.X) + ", ");
-//					str += gurobi.x[j][k].get(GRB.DoubleAttr.X) + ", ";
-//				}	
-//				System.out.println("]");
-//				str += "]\n";
-//			}			
-//			System.out.print("]");
-//			str += "]";
 //			Write file			
 			gurobi.model.dispose();
 			gurobi.env.dispose();

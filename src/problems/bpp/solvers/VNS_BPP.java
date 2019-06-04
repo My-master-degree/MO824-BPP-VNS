@@ -6,6 +6,7 @@ import java.util.List;
 import metaheuristics.vns.AbstractVNS;
 import metaheuristics.vns.LocalSearch;
 import metaheuristics.vns.AbstractVNS.VNS_TYPE;
+import problems.bpp.BPP;
 import problems.bpp.BPP_Inverse;
 import problems.bpp.Bin;
 import problems.bpp.construction.ConstructionMethod;
@@ -20,6 +21,14 @@ public class VNS_BPP extends AbstractVNS<Bin> {
 			ConstructionMethod constructionMethod, LocalSearch<Bin> localSearch, 
 			List<LocalSearch<Bin>> neighborhoodStructures, VNS_TYPE vns_type) throws IOException {		
 		super(new BPP_Inverse(filename), iterations, maxDurationInMilliseconds, neighborhoodStructures, vns_type);
+		this.constructionMethod = constructionMethod;
+		this.localSearch = localSearch;
+	}
+	
+	public VNS_BPP(BPP eval, Integer iterations, Integer maxDurationInMilliseconds, 
+			ConstructionMethod constructionMethod, LocalSearch<Bin> localSearch, 
+			List<LocalSearch<Bin>> neighborhoodStructures, VNS_TYPE vns_type) throws IOException {		
+		super(eval, iterations, maxDurationInMilliseconds, neighborhoodStructures, vns_type);
 		this.constructionMethod = constructionMethod;
 		this.localSearch = localSearch;
 	}

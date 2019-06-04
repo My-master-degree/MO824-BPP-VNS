@@ -10,10 +10,10 @@ import problems.Evaluator;
 import solutions.Solution;
 
 /**
- * Abstract class for metaheuristic GRASP (Greedy Randomized Adaptive Search
- * Procedure). It consider a maximization problem.
+ * Abstract class for metaheuristic VNS (Variable Neighborhood Search). 
+ * It consider a maximization problem.
  * 
- * @author ccavellucci, fusberti
+ * @author matheus diógenes, cristina freitas
  * @param <E>
  *            Generic type of the element which composes the solution.
  */
@@ -21,12 +21,16 @@ public abstract class AbstractVNS<E> {
 	
 	public enum VNS_TYPE{
 		INTENSIFICATION(1),
-		DIVERSIFICATION(2);
+		DIVERSIFICATION(2),
+		INTENSIFICATION_DIVERSIFICATION(3), 
+		NONE(4);
 		VNS_TYPE(int type){
 			this.type = type;
 		}
 		int type;
 	}
+	
+	protected int a;
 	
 	protected VNS_TYPE vns_type;
 	
@@ -94,11 +98,27 @@ public abstract class AbstractVNS<E> {
 		this.maxDurationInMilliseconds = maxDurationInMilliseconds;
 		this.neighborhoodStructures = localSearchs;
 		this.vns_type = vns_type;
-		if (vns_type.equals(VNS_TYPE.INTENSIFICATION))
-			k_step = 1;
-		else
-			k_step = 2;
+		if (vns_type.equals(VNS_TYPE.INTENSIFICATION_DIVERSIFICATION) ||vns_type.equals(VNS_TYPE.DIVERSIFICATION)) {
+			k_step = this.neighborhoodStructures.size()/2;
+			a = this.neighborhoodStructures.size();
+		}else if (vns_type.equals(VNS_TYPE.INTENSIFICATION)) {
+			a = this.neighborhoodStructures.size();
+		}
 	}	
+	
+	private int getKStep(int k, int improvements, int iterations) {
+		if (vns_type.equals(VNS_TYPE.INTENSIFICATION_DIVERSIFICATION)) {
+			if (rng.nextDouble() <= improvements/iterations) {
+				return k; 
+			}
+			return k + k_step;
+		}else if(vns_type.equals(VNS_TYPE.DIVERSIFICATION)) {
+			return k + k_step;
+		}else if(vns_type.equals(VNS_TYPE.INTENSIFICATION)) {
+			return (k%a)/(a-1);
+		}
+		return k + 1;
+	}
 	
 	/**
 	 * The GRASP mainframe. It consists of a loop, in which each iteration goes
@@ -109,53 +129,31 @@ public abstract class AbstractVNS<E> {
 	 */
 	public Solution<E> solve() {
 		bestSol = constructiveHeuristic();
-		if (verbose) {
-//			System.out.println("\tConstruction:" + bestSol.size());
-		}
 		long endTime = System.currentTimeMillis() + maxDurationInMilliseconds;	
 		Solution<E> localOptimalSolution = bestSol;
 		this.ObjFunction.evaluate(localOptimalSolution);
-		int j = 0;
-		for (int i = 0; 
-			i < this.neighborhoodStructures.size() && 
-			System.currentTimeMillis() < endTime; i += k_step, j++) {			
-//			get random solution
-//			Solution<E> randomSolution = this.random(this.bestSol);
-//			this.ObjFunction.evaluate(randomSolution);			
-			
-//			get local optimal solution
-//			Solution<E> localOptimalSolution = localSearch(randomSolution);
-//			Solution<E> localOptimalSolution = this.neighborhoodStructures.get(i).localOptimalSolution(this.ObjFunction, this.bestSol);
-//			for (int k = 0; k < this.neighborhoodStructures.size(); k++) {
-			localOptimalSolution = this.neighborhoodStructures.get(i).localOptimalSolution(this.ObjFunction, localOptimalSolution);	
-//			}
+		Integer improvements = 0;
+		for (int i = 0, j = 1; 
+			j <= maxNumberOfIterations &&
+			System.currentTimeMillis() < endTime; j++) {
+			int index = i%this.neighborhoodStructures.size();
+//			random solution
+			Solution<E> randomSolution = this.neighborhoodStructures.get(index).randomSolution(this.ObjFunction, localOptimalSolution);
+			this.ObjFunction.evaluate(randomSolution);
+//			local opt solution
+			localOptimalSolution = this.neighborhoodStructures.get(index).localOptimalSolution(this.ObjFunction, randomSolution);
 			this.ObjFunction.evaluate(localOptimalSolution);
 //			check cost
 			if (localOptimalSolution.cost < bestSol.cost) {
+				i = 0;
+				improvements++;
 				bestSol = new Solution<E>(localOptimalSolution);
 				this.ObjFunction.evaluate(bestSol);
 				if (verbose) {
-//					System.out.println("\t(Iter. " + j + ") BestSol = " + bestSol);
+					System.out.println("\t(Iter. " + j + ") BestSol = " + bestSol);
 				}
-			}		
-//			break;
-		}
-		
-		
-//		
-		for (;j < maxNumberOfIterations && System.currentTimeMillis() < endTime; j++) {
-			Solution<E> randomSolution = this.random(localOptimalSolution);	
-			this.ObjFunction.evaluate(randomSolution);
-			for (int i = 0; i < this.neighborhoodStructures.size(); i++) {				
-//				check cost
-				randomSolution = this.neighborhoodStructures.get(i).localOptimalSolution(this.ObjFunction, randomSolution);
-				if (randomSolution.cost < bestSol.cost) {
-					bestSol = new Solution<E>(randomSolution);
-					this.ObjFunction.evaluate(bestSol);
-					if (verbose) {
-//						System.out.println("\t(Iter. " + j + ") BestSol = " + bestSol);
-					}
-				}		
+			}else {
+				i = getKStep(i, improvements, j);
 			}
 		}
 		

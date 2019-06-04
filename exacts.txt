@@ -1,0 +1,51 @@
+EXACT
+./bpp_instances/instance0.bpp
+Z* = 66.0
+ObjBound = 65.00000000000001
+ObjBoundC = 65.00000000000001
+Time = 600052
+./bpp_instances/instance1.bpp
+Z* = 66.0
+ObjBound = 65.00000000000001
+ObjBoundC = 65.00000000000001
+Time = 600085
+./bpp_instances/instance2.bpp
+Z* = 135.0
+ObjBound = 132.0
+ObjBoundC = 132.0
+Time = 600119
+./bpp_instances/instance3.bpp
+Z* = 133.0
+ObjBound = 132.00000000000006
+ObjBoundC = 132.00000000000006
+Time = 600379
+./bpp_instances/instance4.bpp
+Z* = 201.0
+ObjBound = 198.00000000000006
+ObjBoundC = 198.00000000000006
+Time = 601182
+./bpp_instances/instance5.bpp
+Z* = 205.0
+ObjBound = 198.00000000000003
+ObjBoundC = 198.00000000000003
+Time = 600126
+./bpp_instances/instance6.bpp
+Z* = 279.0
+ObjBound = 265.00000000000006
+ObjBoundC = 265.00000000000006
+Time = 600179
+./bpp_instances/instance7.bpp
+Z* = 281.0
+ObjBound = 265.00000000000006
+ObjBoundC = 265.00000000000006
+Time = 600170
+./bpp_instances/instance8.bpp
+Z* = 348.0
+ObjBound = 332.0
+ObjBoundC = 332.0
+Time = 668756
+./bpp_instances/instance9.bpp
+Z* = 354.0
+ObjBound = 332.0000000000001
+ObjBoundC = 332.0000000000001
+Time = 600476

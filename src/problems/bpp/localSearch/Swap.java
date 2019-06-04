@@ -113,7 +113,6 @@ public class Swap extends LocalSearch{
 				break;
 			}
 		}
-		System.out.println("Swap wort to: "+newSolution.size());
 		return newSolution;
 	}
 

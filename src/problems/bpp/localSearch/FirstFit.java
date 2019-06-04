@@ -87,7 +87,6 @@ public class FirstFit extends LocalSearch {
 			}
 		}			
 		newSolution.addAll(partialSolution);
-		System.out.println("FF wort to: "+newSolution.size());
 		return newSolution;
 	}
 
