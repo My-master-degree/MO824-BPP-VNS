@@ -140,17 +140,18 @@ public abstract class AbstractVNS<E extends Evaluator<T, S>, S extends Solution<
 		long endTime = System.currentTimeMillis() + maxDurationInMilliseconds;					
 		Integer improvements = 0;
 		for (int i = 0, j = 1; 
+			i < this.neighborhoodStructures.size() &&
 			j <= maxNumberOfIterations &&
 			System.currentTimeMillis() < endTime; j++) {
-			int index = i%this.neighborhoodStructures.size();
+//			int index = i%this.neighborhoodStructures.size();
 //			random solution
-			S randomSolution = this.neighborhoodStructures.get(index).randomSolution(this.ObjFunction, localOptimalSolution);
+			S randomSolution = this.neighborhoodStructures.get(i).randomSolution(this.ObjFunction, localOptimalSolution);
 			this.ObjFunction.evaluate(randomSolution);
 //			local opt solution
-			localOptimalSolution = this.neighborhoodStructures.get(index).localOptimalSolution(this.ObjFunction, randomSolution);
+			localOptimalSolution = this.neighborhoodStructures.get(i).localOptimalSolution(this.ObjFunction, randomSolution);
 			this.ObjFunction.evaluate(localOptimalSolution);
 //			check cost
-			if (localOptimalSolution.cost < bestSol.cost) {
+			if (localOptimalSolution.cost > bestSol.cost) {				
 				i = 0;
 				improvements++;
 				bestSol = (S) localOptimalSolution.clone();

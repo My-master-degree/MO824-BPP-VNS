@@ -12,20 +12,20 @@ import problems.bpp.Bins;
 import problems.bpp.construction.ConstructionMethod;
 import solutions.Solution;
 
-public class VNS_BPP extends AbstractVNS<BPP, Bins, Bin> {
+public class VNS_BPP extends AbstractVNS<BPP_Inverse, Bins, Bin> {
 	
 	private ConstructionMethod constructionMethod;
 	
 	public VNS_BPP(String filename, Integer iterations, Integer maxDurationInMilliseconds, 
 			ConstructionMethod constructionMethod, 
-			List<LocalSearch<BPP, Bins>> neighborhoodStructures, VNS_TYPE vns_type) throws IOException {		
+			List<LocalSearch<BPP_Inverse, Bins>> neighborhoodStructures, VNS_TYPE vns_type) throws IOException {		
 		super(new BPP_Inverse(filename), iterations, maxDurationInMilliseconds, neighborhoodStructures, vns_type);
 		this.constructionMethod = constructionMethod;
 	}
 	
-	public VNS_BPP(BPP eval, Integer iterations, Integer maxDurationInMilliseconds, 
+	public VNS_BPP(BPP_Inverse eval, Integer iterations, Integer maxDurationInMilliseconds, 
 			ConstructionMethod constructionMethod, 
-			List<LocalSearch<BPP, Bins>> neighborhoodStructures, VNS_TYPE vns_type) throws IOException {		
+			List<LocalSearch<BPP_Inverse, Bins>> neighborhoodStructures, VNS_TYPE vns_type) throws IOException {		
 		super(eval, iterations, maxDurationInMilliseconds, neighborhoodStructures, vns_type);
 		this.constructionMethod = constructionMethod;
 	}

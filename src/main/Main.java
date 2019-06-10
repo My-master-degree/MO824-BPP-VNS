@@ -23,6 +23,7 @@ import problems.bpp.construction.BFD;
 import problems.bpp.construction.ConstructionMethod;
 import problems.bpp.construction.FFD;
 import problems.bpp.construction.NFD;
+import problems.bpp.construction.OneBinPerItem;
 import problems.bpp.localSearch.FirstFit;
 import problems.bpp.localSearch.Rellocate;
 import problems.bpp.localSearch.Shuffle;
@@ -54,25 +55,25 @@ public class Main {
 			"./bpp_instances/instance9.bpp",										
 		};
 //		heuristic
-		BFD bfd = new BFD();
+		OneBinPerItem oneItemPerBin = new OneBinPerItem();
 		String str = "";
-		str = "VNS BFD Itensification Diversification\n";
-		System.out.println("VNS BFD Itensification");		
-		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.INTENSIFICATION_DIVERSIFICATION);
 		BufferedWriter writer;
-		try {
-			writer = new BufferedWriter(new FileWriter("vnd_bfd_itensification_diversification.txt"));
-			writer.write(str);		     
-		    writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+//		str = "VNS BFD Itensification Diversification\n";
+//		System.out.println("VNS BFD Itensification");		
+//		str += runVNS(bpp_instances, oneItemPerBin, AbstractVNS.VNS_TYPE.INTENSIFICATION_DIVERSIFICATION);		
+//		try {
+//			writer = new BufferedWriter(new FileWriter("vnd_bfd_itensification_diversification.txt"));
+//			writer.write(str);		     
+//		    writer.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}	
 //		none
 		str = "";
 		str = "VNS BFD None\n";
 		System.out.println("VNS BFD None");		
-		str += runVNS(bpp_instances, bfd, AbstractVNS.VNS_TYPE.NONE);		
+		str += runVNS(bpp_instances, oneItemPerBin, AbstractVNS.VNS_TYPE.NONE);		
 		try {
 			writer = new BufferedWriter(new FileWriter("vnd_bfd_none.txt"));
 			writer.write(str);		     
@@ -106,12 +107,12 @@ public class Main {
 			str += instances[i] + "\n";
 			try {
 				BPP_Inverse bpp = new BPP_Inverse(instances[i]);
-				List<LocalSearch<BPP, Bins>> localSearchs = new ArrayList<LocalSearch<BPP, Bins>> (); 
+				List<LocalSearch<BPP_Inverse, Bins>> localSearchs = new ArrayList<LocalSearch<BPP_Inverse, Bins>> (); 
 				localSearchs.add(new Swap(0, 1));
 				localSearchs.add(new Swap(0, 2));
 				localSearchs.add(new Swap(1, 1));
 				localSearchs.add(new Swap(2, 1));
-				localSearchs.add(new FirstFit(bpp.size));
+//				localSearchs.add(new FirstFit(bpp.size));
 				VNS_BPP vns_bpp = new VNS_BPP(bpp, VNS_ITERATION_MAX_NUMBER, VNS_TIME_MAX_MILI_SECONDS, constructionMethod, localSearchs, vns_type);
 				
 				
@@ -131,7 +132,7 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-//			break;
+			break;
 			
 		}	
 		return str;

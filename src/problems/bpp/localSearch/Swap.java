@@ -14,7 +14,7 @@ import java.util.Random;
 import metaheuristics.vns.LocalSearch;
 import problems.Evaluator;
 
-public class Swap extends LocalSearch<BPP, Bins>{
+public class Swap extends LocalSearch<BPP_Inverse, Bins>{
 
 	private Integer p, q;
 	
@@ -24,7 +24,7 @@ public class Swap extends LocalSearch<BPP, Bins>{
 	}
 	
 	@Override
-	public Bins localOptimalSolution(BPP bpp, Bins solution) {
+	public Bins localOptimalSolution(BPP_Inverse bpp, Bins solution) {
 		Bins newSolution = (Bins) solution.clone();
 		Integer n = newSolution.size();		
 //		iterate over bins
@@ -42,36 +42,40 @@ public class Swap extends LocalSearch<BPP, Bins>{
 					Bin secondSubBin = secondBin.subBin(0, q);
 					Double newFirstBinWeight = firstBin.getWeight() - firstSubBin.getWeight() + secondSubBin.getWeight();
 					Double newSecondBinWeight = secondBin.getWeight() - secondSubBin.getWeight() + firstSubBin.getWeight();
-					if (newFirstBinWeight <= bpp.capacity && newSecondBinWeight <= bpp.capacity && 
-						Util.costOfRemainingWeights(newFirstBinWeight, newSecondBinWeight) < Util.costOfBins(firstBin, secondBin)) {					
-//						change firstBin						
-						firstBin.removeAll(firstSubBin);						
-						firstBin.addAll(secondSubBin);
-//						change secondBin
-						secondBin.removeAll(secondSubBin);						
-						secondBin.addAll(firstSubBin);
-//						set indexes
-						newSolution.set(i, firstBin);
-						newSolution.set(j, secondBin);
-//						if some there's bin empty
-						if (firstBin.size() == 0) {
-							newSolution.remove(i);
-							n = newSolution.size();
-						}
-						if (secondBin.size() == 0) {
-							newSolution.remove(j);
-							n = newSolution.size();
-						}						
+					if (newFirstBinWeight <= bpp.capacity && newSecondBinWeight <= bpp.capacity) {
+						Double newFirstBinRemainingWeight = bpp.capacity - newFirstBinWeight,
+							newSecondBinRemainingWeight = bpp.capacity - newSecondBinWeight;
+						if (newFirstBinWeight == 0 || newSecondBinWeight == 0 || 
+							Util.costOfRemainingWeights(newFirstBinRemainingWeight, newSecondBinRemainingWeight) < 
+							Util.costOfBins(firstBin, secondBin)) {
+//							change firstBin						
+							firstBin.removeAll(firstSubBin);						
+							firstBin.addAll(secondSubBin);
+//							change secondBin
+							secondBin.removeAll(secondSubBin);						
+							secondBin.addAll(firstSubBin);
+//							set indexes
+							newSolution.set(i, firstBin);
+							newSolution.set(j, secondBin);
+//							if some there's bin empty
+							if (firstBin.size() == 0) {
+								newSolution.remove(i);
+								n = newSolution.size();
+							}
+							if (secondBin.size() == 0) {
+								newSolution.remove(j);
+								n = newSolution.size();
+							}
+						}					
 					}
 				}				
 			}			
 		}		
-//		System.out.println("swap with: "+newSolution.size());
 		return newSolution;
 	}
 
 	@Override
-	public Bins randomSolution(BPP eval, Bins solution) {
+	public Bins randomSolution(BPP_Inverse eval, Bins solution) {
 		Bins newSolution = (Bins) solution.clone();
 		Random random = new Random();
 		Integer n = newSolution.size();

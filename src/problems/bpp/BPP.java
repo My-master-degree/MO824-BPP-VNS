@@ -54,7 +54,7 @@ public class BPP implements Evaluator<Bin, Bins> {
 	public Double evaluate(Bins sol) {
 		double cost = 0d;
 		for (Bin bin : sol) {
-			cost += bin.getWeight();
+			cost += bin.getRemainingCapacity();
 		}
 		return cost;		
 	}	

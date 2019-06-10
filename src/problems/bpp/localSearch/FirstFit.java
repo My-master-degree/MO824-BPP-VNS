@@ -27,9 +27,9 @@ public class FirstFit extends LocalSearch<BPP, Bins> {
 			items.addAll(bin);
 		}		
 //		first fit
-		int upperBoundAttempt = (int) Math.ceil(1.23 * eval.lowerBound);
+		int upperBoundAttempt = (int) Math.ceil(1.23 * size);
 		Bins sol = new Bins(upperBoundAttempt);
-		for (int i = 0; i < eval.size; i++) {
+		for (int i = 0; i < size; i++) {
 			boolean inserted = false;
 			for (int j = 0; j < sol.size(); j++) {
 				Bin bin = sol.get(j);
