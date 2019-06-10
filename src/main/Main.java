@@ -38,7 +38,7 @@ import utils.heap.Util;
 public class Main {
 	
 	public static Integer VNS_ITERATION_MAX_NUMBER = Integer.MAX_VALUE;
-	public static Integer VNS_TIME_MAX_MILI_SECONDS = 1000;
+	public static Integer VNS_TIME_MAX_MILI_SECONDS = 600000;
 	public static Integer EXACT_TIME_MAX_SECONDS = 600;
 	
 	public static void main(String[] args) {
@@ -54,28 +54,28 @@ public class Main {
 			"./bpp_instances/instance8.bpp",			
 			"./bpp_instances/instance9.bpp",										
 		};
-//		heuristic
+//		setup
 		OneBinPerItem oneItemPerBin = new OneBinPerItem();
 		String str = "";
 		BufferedWriter writer;
-//		str = "VNS BFD Itensification Diversification\n";
-//		System.out.println("VNS BFD Itensification");		
-//		str += runVNS(bpp_instances, oneItemPerBin, AbstractVNS.VNS_TYPE.INTENSIFICATION_DIVERSIFICATION);		
-//		try {
-//			writer = new BufferedWriter(new FileWriter("vnd_bfd_itensification_diversification.txt"));
-//			writer.write(str);		     
-//		    writer.close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}	
+//		heuristic		
+		str = "VNS Itensification\n";
+		System.out.println("VNS Itensification");		
+		str += runVNS(bpp_instances, oneItemPerBin, AbstractVNS.VNS_TYPE.INTENSIFICATION);		
+		try {
+			writer = new BufferedWriter(new FileWriter("vns_itensification.txt"));
+			writer.write(str);		     
+		    writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 //		none
-		str = "";
-		str = "VNS BFD None\n";
-		System.out.println("VNS BFD None");		
+		str = "VNS None\n";
+		System.out.println("VNS None");		
 		str += runVNS(bpp_instances, oneItemPerBin, AbstractVNS.VNS_TYPE.NONE);		
 		try {
-			writer = new BufferedWriter(new FileWriter("vnd_bfd_none.txt"));
+			writer = new BufferedWriter(new FileWriter("vns_none.txt"));
 			writer.write(str);		     
 		    writer.close();
 		} catch (IOException e) {
@@ -83,21 +83,21 @@ public class Main {
 			e.printStackTrace();
 		}	
 //		exact
-//		str = "EXACT\n";
-//		try {
-//			str += runExacts(bpp_instances);
-//		} catch (IOException | GRBException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}		
-//		try {
-//			writer = new BufferedWriter(new FileWriter("exacts.txt"));
-//			writer.write(str);		     
-//		    writer.close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}	  
+		str = "EXACT\n";
+		try {
+			str += runExacts(bpp_instances);
+		} catch (IOException | GRBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		try {
+			writer = new BufferedWriter(new FileWriter("exacts.txt"));
+			writer.write(str);		     
+		    writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	  
 	}
 	
 	public static String runVNS(String[] instances, ConstructionMethod constructionMethod, AbstractVNS.VNS_TYPE vns_type) {		
@@ -113,27 +113,14 @@ public class Main {
 				localSearchs.add(new Swap(1, 1));
 				localSearchs.add(new Swap(2, 1));
 //				localSearchs.add(new FirstFit(bpp.size));
-				VNS_BPP vns_bpp = new VNS_BPP(bpp, VNS_ITERATION_MAX_NUMBER, VNS_TIME_MAX_MILI_SECONDS, constructionMethod, localSearchs, vns_type);
-				
-				
-				
-				
-							
+				VNS_BPP vns_bpp = new VNS_BPP(bpp, VNS_ITERATION_MAX_NUMBER, VNS_TIME_MAX_MILI_SECONDS, constructionMethod, localSearchs, vns_type);	
 				Bins sol = new Bins(vns_bpp.solve());
-				
 				str += "\tVNS cost: "+sol.size() + "\n";
 				System.out.println("\tVNS cost: "+sol.size());
-				
-				
 				Util.checkBinPackingSolution(sol, (BPP) vns_bpp.getObjFunction());
-				
-				
-				
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			break;
-			
+			}		
 		}	
 		return str;
 	}

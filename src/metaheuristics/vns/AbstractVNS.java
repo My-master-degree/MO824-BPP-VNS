@@ -25,8 +25,6 @@ public abstract class AbstractVNS<E extends Evaluator<T, S>, S extends Solution<
 	
 	public enum VNS_TYPE{
 		INTENSIFICATION(1),
-		DIVERSIFICATION(2),
-		INTENSIFICATION_DIVERSIFICATION(3), 
 		NONE(4);
 		VNS_TYPE(int type){
 			this.type = type;
@@ -78,11 +76,6 @@ public abstract class AbstractVNS<E extends Evaluator<T, S>, S extends Solution<
 	 * the time in microseconds the VNS main loop executes.
 	 */
 	protected Integer maxDurationInMilliseconds;
-	
-	/**
-	 * the time in microseconds the VNS main loop executes.
-	 */
-	protected Integer k_step;	
 
 	/**
 	 * Constructor for the AbstractGRASP class.
@@ -102,26 +95,14 @@ public abstract class AbstractVNS<E extends Evaluator<T, S>, S extends Solution<
 		this.maxDurationInMilliseconds = maxDurationInMilliseconds;
 		this.neighborhoodStructures = localSearchs;
 		this.vns_type = vns_type;
-		if (vns_type.equals(VNS_TYPE.INTENSIFICATION_DIVERSIFICATION) ||vns_type.equals(VNS_TYPE.DIVERSIFICATION)) {
-			k_step = this.neighborhoodStructures.size()/2;
-			a = this.neighborhoodStructures.size();
-		}else if (vns_type.equals(VNS_TYPE.INTENSIFICATION)) {
-			a = this.neighborhoodStructures.size();
-		}
+		a = this.neighborhoodStructures.size();
 	}	
 	
-	private int getKStep(int k, int improvements, int iterations) {
-		if (vns_type.equals(VNS_TYPE.INTENSIFICATION_DIVERSIFICATION)) {
-			if (rng.nextDouble() <= improvements/iterations) {
-				return k; 
-			}
-			return k + k_step;
-		}else if(vns_type.equals(VNS_TYPE.DIVERSIFICATION)) {
-			return k + k_step;
-		}else if(vns_type.equals(VNS_TYPE.INTENSIFICATION)) {
-			return (k%a)/(a-1);
+	private int getKStep(int i, int c) {
+		if(vns_type.equals(VNS_TYPE.INTENSIFICATION)) {
+			return i + (c%a)/(a-1);
 		}
-		return k + 1;
+		return i + 1;
 	}
 	
 	/**
@@ -136,14 +117,13 @@ public abstract class AbstractVNS<E extends Evaluator<T, S>, S extends Solution<
 		bestSol = constructiveHeuristic();
 		S localOptimalSolution = bestSol;
 		this.ObjFunction.evaluate(localOptimalSolution);
-//		set initial parameters
-		long endTime = System.currentTimeMillis() + maxDurationInMilliseconds;					
-		Integer improvements = 0;
-		for (int i = 0, j = 1; 
+		long endTime = System.currentTimeMillis() + this.maxDurationInMilliseconds;
+//		set initial parameters							
+		for (int i = 0, j = 1, c = 0; 
 			i < this.neighborhoodStructures.size() &&
-			j <= maxNumberOfIterations &&
-			System.currentTimeMillis() < endTime; j++) {
-//			int index = i%this.neighborhoodStructures.size();
+			j < this.maxNumberOfIterations &&
+			System.currentTimeMillis() <= endTime
+			; c++, j++) {
 //			random solution
 			S randomSolution = this.neighborhoodStructures.get(i).randomSolution(this.ObjFunction, localOptimalSolution);
 			this.ObjFunction.evaluate(randomSolution);
@@ -153,14 +133,14 @@ public abstract class AbstractVNS<E extends Evaluator<T, S>, S extends Solution<
 //			check cost
 			if (localOptimalSolution.cost > bestSol.cost) {				
 				i = 0;
-				improvements++;
+				c = 0;
 				bestSol = (S) localOptimalSolution.clone();
 				this.ObjFunction.evaluate(bestSol);
 				if (verbose) {
 					System.out.println("\t(Iter. " + j + ") BestSol = " + bestSol);
 				}
 			}else {
-				i = getKStep(i, improvements, j);
+				i = getKStep(i, c);
 			}
 		}
 		

@@ -1,0 +1,3 @@
+VNS Itensification
+./bpp_instances/instance0.bpp
+	VNS cost: 70
