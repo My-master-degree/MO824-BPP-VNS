@@ -37,7 +37,7 @@ import utils.heap.Util;
 public class Main {
 	
 	public static Integer VNS_ITERATION_MAX_NUMBER = Integer.MAX_VALUE;
-	public static Integer VNS_TIME_MAX_MILI_SECONDS = 600000;
+	public static Integer VNS_TIME_MAX_MILI_SECONDS = 1000;
 	public static Integer EXACT_TIME_MAX_SECONDS = 600;
 	
 	public static void main(String[] args) {
@@ -82,21 +82,21 @@ public class Main {
 			e.printStackTrace();
 		}	
 //		exact
-		str = "EXACT\n";
-		try {
-			str += runExacts(bpp_instances);
-		} catch (IOException | GRBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		try {
-			writer = new BufferedWriter(new FileWriter("exacts.txt"));
-			writer.write(str);		     
-		    writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	  
+//		str = "EXACT\n";
+//		try {
+//			str += runExacts(bpp_instances);
+//		} catch (IOException | GRBException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}		
+//		try {
+//			writer = new BufferedWriter(new FileWriter("exacts.txt"));
+//			writer.write(str);		     
+//		    writer.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}	  
 	}
 	
 	public static String runVNS(String[] instances, ConstructionMethod constructionMethod, AbstractVNS.VNS_TYPE vns_type) {		
@@ -106,41 +106,13 @@ public class Main {
 			str += instances[i] + "\n";
 			try {
 				BPP_Inverse bpp = new BPP_Inverse(instances[i]);
-				List<LocalSearch<Bin>> neighborhoodConverted = new ArrayList<LocalSearch<Bin>>();
-				
-				LocalSearch<Bin> localSearch = new LocalSearch<Bin>() {
-					@Override
-					public Solution<Bin> localOptimalSolution(Evaluator<Bin> eval, Solution<Bin> solution) {						
-						return new Shuffle().localOptimalSolution((BPP) eval, (Bins) solution);
-					}
-
-					@Override
-					public Solution<Bin> randomSolution(Evaluator<Bin> eval, Solution<Bin> solution) {
-						return new Shuffle().randomSolution((BPP) eval, new Bins(solution));
-					}
-				};
-				List<problems.bpp.localSearch.LocalSearch> neighborhoodStructures = new ArrayList<problems.bpp.localSearch.LocalSearch>(
-						Arrays.asList(
-								new Swap(0, 1), new Swap(0, 2), new Swap(1, 1), new Swap(2, 1), 
-								new FirstFit(bpp.size)
-								)
-						); 				
-					for (problems.bpp.localSearch.LocalSearch neighborhoodStructure : neighborhoodStructures) {
-						neighborhoodConverted.add(new LocalSearch<Bin>() {				
-							@Override
-							public Solution<Bin> randomSolution(Evaluator<Bin> eval, Solution<Bin> solution) {					
-								return (Solution<Bin>) neighborhoodStructure.randomSolution((BPP) eval, new Bins(solution));
-							}
-							
-							@Override
-							public Solution<Bin> localOptimalSolution(Evaluator<Bin> eval, Solution<Bin> solution) {
-								return (Solution<Bin>) neighborhoodStructure.localOptimalSolution((BPP) eval, (Bins) solution);
-							}
-						});
-					}
-				
-				VNS_BPP vns_bpp = new VNS_BPP(bpp, VNS_ITERATION_MAX_NUMBER, VNS_TIME_MAX_MILI_SECONDS, constructionMethod, 
-						localSearch, neighborhoodConverted, vns_type);
+				List<LocalSearch<BPP, Bins>> localSearchs = new ArrayList<LocalSearch<BPP, Bins>> (); 
+				localSearchs.add(new Swap(0, 1));
+				localSearchs.add(new Swap(0, 2));
+				localSearchs.add(new Swap(1, 1));
+				localSearchs.add(new Swap(2, 1));
+				localSearchs.add(new FirstFit(bpp.size));
+				VNS_BPP vns_bpp = new VNS_BPP(bpp, VNS_ITERATION_MAX_NUMBER, VNS_TIME_MAX_MILI_SECONDS, constructionMethod, localSearchs, vns_type);
 				
 				
 				

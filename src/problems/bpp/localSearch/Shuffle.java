@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import metaheuristics.vns.LocalSearch;
 import problems.bpp.BPP;
 import problems.bpp.Bin;
 import problems.bpp.Bins;
 
-public class Shuffle extends LocalSearch {
+public class Shuffle extends LocalSearch<BPP, Bins> {
 
 	@Override
 	public Bins localOptimalSolution(BPP eval, Bins solution) {

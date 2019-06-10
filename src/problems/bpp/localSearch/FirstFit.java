@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import metaheuristics.vns.LocalSearch;
 import problems.bpp.BPP;
 import problems.bpp.Bin;
 import problems.bpp.Bins;
 import problems.bpp.construction.FFD;
+import utils.heap.Util;
 
-public class FirstFit extends LocalSearch {
+public class FirstFit extends LocalSearch<BPP, Bins> {
 
 	private int size;
 	
@@ -42,7 +44,7 @@ public class FirstFit extends LocalSearch {
 				sol.add(newBin);
 			}
 		}	
-		if (super.costOfBins(sol) < super.costOfBins(solution))	{
+		if (Util.costOfBins(sol) < Util.costOfBins(solution))	{
 //			System.out.println("FF with: "+sol.size());
 			return sol;
 		}else {

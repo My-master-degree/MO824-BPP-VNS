@@ -5,14 +5,16 @@ import problems.bpp.BPP_Inverse;
 import problems.bpp.Bin;
 import problems.bpp.Bins;
 import solutions.Solution;
+import utils.heap.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import metaheuristics.vns.LocalSearch;
 import problems.Evaluator;
 
-public class Swap extends LocalSearch{
+public class Swap extends LocalSearch<BPP, Bins>{
 
 	private Integer p, q;
 	
@@ -41,7 +43,7 @@ public class Swap extends LocalSearch{
 					Double newFirstBinWeight = firstBin.getWeight() - firstSubBin.getWeight() + secondSubBin.getWeight();
 					Double newSecondBinWeight = secondBin.getWeight() - secondSubBin.getWeight() + firstSubBin.getWeight();
 					if (newFirstBinWeight <= bpp.capacity && newSecondBinWeight <= bpp.capacity && 
-						super.costOfRemainingWeights(newFirstBinWeight, newSecondBinWeight) < super.costOfBins(firstBin, secondBin)) {					
+						Util.costOfRemainingWeights(newFirstBinWeight, newSecondBinWeight) < Util.costOfBins(firstBin, secondBin)) {					
 //						change firstBin						
 						firstBin.removeAll(firstSubBin);						
 						firstBin.addAll(secondSubBin);

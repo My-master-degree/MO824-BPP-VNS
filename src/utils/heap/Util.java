@@ -46,4 +46,29 @@ public class Util {
 			System.out.println((i + 1) + ": "+ solution.get(i).toString());
 		}
 	}
+	
+	public static Double costOfBins(Bin... bins) {
+		Double cost = 0d;
+		for (Bin bin : bins) {
+			cost += Math.pow(bin.getRemainingCapacity(), 2);
+		}
+		return cost;
+	}
+	
+	public static Double costOfBins(Bins bins) {
+		Double cost = 0d;
+		for (Bin bin : bins) {
+			cost += Math.pow(bin.getRemainingCapacity(), 2);
+		}
+		return cost;
+	}
+
+	public static Double costOfRemainingWeights(Double... binsWeights) {
+		Double cost = 0d;
+		for (Double binWeight : binsWeights) {
+			cost += Math.pow(binWeight, 2);
+		}
+		return cost;
+	}
+	
 }

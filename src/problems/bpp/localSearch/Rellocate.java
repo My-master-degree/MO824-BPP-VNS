@@ -2,11 +2,13 @@ package problems.bpp.localSearch;
 
 import java.util.Random;
 
+import metaheuristics.vns.LocalSearch;
 import problems.bpp.BPP;
 import problems.bpp.Bin;
 import problems.bpp.Bins;
+import utils.heap.Util;
 
-public class Rellocate extends LocalSearch {
+public class Rellocate extends LocalSearch<BPP, Bins> {
 	
 	private Swap swap;	
 	
@@ -30,7 +32,7 @@ public class Rellocate extends LocalSearch {
 					Double newFirstBinWeight = firstBin.getWeight() - firstSubBin.getWeight(),
 						newSecondBinWeight = secondBin.getWeight() + firstSubBin.getWeight();
 					if (newSecondBinWeight <= bpp.capacity && 
-						super.costOfRemainingWeights(newFirstBinWeight, newSecondBinWeight) < super.costOfBins(firstBin, secondBin)) {					
+						Util.costOfRemainingWeights(newFirstBinWeight, newSecondBinWeight) < Util.costOfBins(firstBin, secondBin)) {					
 //						change firstBin						
 						firstBin.removeAll(firstSubBin);
 //						change secondBin

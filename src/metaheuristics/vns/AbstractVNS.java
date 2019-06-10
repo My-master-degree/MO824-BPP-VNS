@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Random;
 
 import problems.Evaluator;
+import problems.bpp.BPP;
+import problems.bpp.BPP_Inverse;
+import problems.bpp.Bin;
+import problems.bpp.Bins;
 import solutions.Solution;
 
 /**
@@ -17,7 +21,7 @@ import solutions.Solution;
  * @param <E>
  *            Generic type of the element which composes the solution.
  */
-public abstract class AbstractVNS<E> {
+public abstract class AbstractVNS<E extends Evaluator<T, S>, S extends Solution<T>, T> {
 	
 	public enum VNS_TYPE{
 		INTENSIFICATION(1),
@@ -48,12 +52,12 @@ public abstract class AbstractVNS<E> {
 	/**
 	 * the neighborhood structure list
 	 */
-	protected List<LocalSearch<E>> neighborhoodStructures;
+	protected List<LocalSearch<E, S>> neighborhoodStructures;
 	
 	/**
 	 * the objective function being optimized
 	 */
-	protected Evaluator<E> ObjFunction;
+	protected E ObjFunction;
 
 	/**
 	 * the best solution cost
@@ -63,7 +67,7 @@ public abstract class AbstractVNS<E> {
 	/**
 	 * the best solution
 	 */
-	protected Solution<E> bestSol;
+	protected S bestSol;
 
 	/**
 	 * the number of iterations the VNS main loop executes.
@@ -91,8 +95,8 @@ public abstract class AbstractVNS<E> {
 	 * @param iterations
 	 *            The number of iterations which the GRASP will be executed.
 	 */
-	public AbstractVNS(Evaluator<E> objFunction, Integer iterations, Integer maxDurationInMilliseconds, 
-			List<LocalSearch<E>> localSearchs, VNS_TYPE vns_type) {
+	public AbstractVNS(E objFunction, Integer iterations, Integer maxDurationInMilliseconds, 
+			List<LocalSearch<E, S>> localSearchs, VNS_TYPE vns_type) {
 		this.ObjFunction = objFunction;
 		this.maxNumberOfIterations = iterations;
 		this.maxDurationInMilliseconds = maxDurationInMilliseconds;
@@ -127,18 +131,20 @@ public abstract class AbstractVNS<E> {
 	 * 
 	 * @return The best feasible solution obtained throughout all iterations.
 	 */
-	public Solution<E> solve() {
+	public S solve() {
+//		build initial solution
 		bestSol = constructiveHeuristic();
-		long endTime = System.currentTimeMillis() + maxDurationInMilliseconds;	
-		Solution<E> localOptimalSolution = bestSol;
+		S localOptimalSolution = bestSol;
 		this.ObjFunction.evaluate(localOptimalSolution);
+//		set initial parameters
+		long endTime = System.currentTimeMillis() + maxDurationInMilliseconds;					
 		Integer improvements = 0;
 		for (int i = 0, j = 1; 
 			j <= maxNumberOfIterations &&
 			System.currentTimeMillis() < endTime; j++) {
 			int index = i%this.neighborhoodStructures.size();
 //			random solution
-			Solution<E> randomSolution = this.neighborhoodStructures.get(index).randomSolution(this.ObjFunction, localOptimalSolution);
+			S randomSolution = this.neighborhoodStructures.get(index).randomSolution(this.ObjFunction, localOptimalSolution);
 			this.ObjFunction.evaluate(randomSolution);
 //			local opt solution
 			localOptimalSolution = this.neighborhoodStructures.get(index).localOptimalSolution(this.ObjFunction, randomSolution);
@@ -147,7 +153,7 @@ public abstract class AbstractVNS<E> {
 			if (localOptimalSolution.cost < bestSol.cost) {
 				i = 0;
 				improvements++;
-				bestSol = new Solution<E>(localOptimalSolution);
+				bestSol = (S) localOptimalSolution.clone();
 				this.ObjFunction.evaluate(bestSol);
 				if (verbose) {
 					System.out.println("\t(Iter. " + j + ") BestSol = " + bestSol);
@@ -161,28 +167,12 @@ public abstract class AbstractVNS<E> {
 		return bestSol;
 	}	
 	
-	/**
-	 * The GRASP local search phase is responsible for repeatedly applying a
-	 * neighborhood operation while the solution is getting improved, i.e.,
-	 * until a local optimum is attained.
-	 * 
-	 * @return An local optimum solution.
-	 */
-	public abstract Solution<E> random(Solution<E> solution);	
-	
-	/**
-	 * The GRASP constructive heuristic, which is responsible for building a
-	 * feasible solution by selecting in a greedy-random fashion, candidate
-	 * elements to enter the solution.
-	 * 
-	 * @return A feasible solution to the problem being maximized.
-	 */
-	public abstract Solution<E> constructiveHeuristic();
+	public abstract S constructiveHeuristic();
 
 	/**
 	 * @return the objFunction
 	 */
-	public Evaluator<E> getObjFunction() {
+	public E getObjFunction() {
 		return ObjFunction;
 	}
 	
