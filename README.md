@@ -7,4 +7,5 @@ The project file structure works as follows:
 * bpp_instances: Contains some BPP instances;
 * src: Source code.
 
+The detailed documentation can be found [here](https://codedocs.xyz/My-master-degree/MO824-BPP-VNS/).
 Any doubts feel yourself free to reach me out: m228117@dac.unicamp.br
